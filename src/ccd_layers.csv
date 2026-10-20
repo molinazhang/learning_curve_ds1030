@@ -1,0 +1,8 @@
+id,name,parentLayerId,defaultVisibility,subLayerIds,minScale,maxScale,type,geometryType,supportsDynamicLegends
+0,Schools_Points_2025_CCD,-1,False,,0,0,Feature Layer,esriGeometryPoint,True
+4,Schools_Points_2025_CCD,-1,False,,999999,0,Feature Layer,esriGeometryPoint,True
+5,Schools_Points_2025_CCD,-1,False,,0,1000000,Feature Layer,esriGeometryPoint,True
+6,School_District_Office_Points_2025,-1,False,,0,0,Feature Layer,esriGeometryPoint,True
+1,School_Districts_2025_CCD,-1,False,,0,0,Feature Layer,esriGeometryPolygon,True
+3,States_gen,-1,False,,0,0,Feature Layer,esriGeometryPolygon,True
+2,States_wCounts,-1,False,,0,0,Feature Layer,esriGeometryPolygon,True

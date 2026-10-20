@@ -1,0 +1,35 @@
+features = [
+    # School identifier
+    "NCESSCH",
+
+    # Target
+    "STUTERATIO",
+
+    # Socioeconomic
+    "TOTFRL",
+
+    # Demographics
+    "WH",
+    "BL",
+    "HI",
+    "AS",
+    "AM",
+    "HP",
+    "TR",
+
+    # Geographic
+    "STABR",
+    "ULOCALE",
+
+    # School characteristics
+    "CHARTER_TEXT",
+    "VIRTUAL",
+    "SCHOOL_TYPE_TEXT",
+    "SLEVEL_TEXT",
+    "GSLO_NUM",
+    "GSHI_NUM",
+
+    # Enrollment and staffing
+    "MEMBER",
+    "FTE"
+]
