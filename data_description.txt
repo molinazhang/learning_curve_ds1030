@@ -1,0 +1,138 @@
+================================================================================
+DATA DESCRIPTION — DATA1030 Final Project
+AP Participation in U.S. High Schools (2021)
+================================================================================
+
+SOURCE
+--------------------------------------------------------------------------------
+All data comes from the Urban Institute's Education Data Portal API:
+    https://educationdata.urban.org/
+
+Two underlying federal collections are used, all for school year 2021:
+  - CCD  (Common Core of Data, NCES)        -> school directory & enrollment
+  - CRDC (Civil Rights Data Collection, ED) -> Advanced Placement enrollment
+
+Collection code: src/01_data_collection.ipynb
+Cleaning code:   src/02_data_cleaning.ipynb
+
+
+FILES
+--------------------------------------------------------------------------------
+crdc_ap_2021_raw.csv                 (98,010 rows x 17 cols)
+    Raw CRDC AP/IB enrollment, all-students totals (race = 99, sex = 99).
+
+ccd_directory_2021_raw.csv           (102,130 rows x 52 cols)
+    Raw CCD school directory: one row per school with characteristics.
+
+ccd_enrollment_grade9to12_2021_raw.csv  (111,511 rows x 9 cols)
+    Raw CCD enrollment, one row per school x grade for grades 9, 10, 11, 12.
+
+ap_clean_2021.csv                    (19,416 rows x 20 cols)  <-- ANALYSIS FILE
+    Final cleaned, merged dataset. One row per school. Built from the three
+    raw files above. This is the file used for EDA and modeling.
+
+
+UNIT OF OBSERVATION (ap_clean_2021.csv)
+--------------------------------------------------------------------------------
+One row = one public high school (offers grade 12), 2021.
+Restricted to: regular schools, not fully virtual, located in the 50 states +
+DC + Puerto Rico. Unique key: ncessch.
+
+
+TARGET VARIABLE
+--------------------------------------------------------------------------------
+ap_rate   AP participation rate = enrl_AP / enrl_9to12  (range 0 to 1).
+          ~33% of schools have a rate of 0 (no AP enrollment).
+
+
+COLUMNS (ap_clean_2021.csv)
+--------------------------------------------------------------------------------
+Name                          Type     Description
+--------------------------------------------------------------------------------
+ncessch                       int64   NCES unique school ID (12-digit, incl.
+                                       leading zeros). Primary key.
+school_name                   string   School name.
+leaid                         int64   NCES local education agency (district) ID.
+state_location                string   Two-letter state/territory abbreviation.
+fips                          int      State FIPS code (<=56 for states + DC,
+                                       72 for Puerto Rico).
+latitude                      float    School latitude (decimal degrees).
+longitude                     float    School longitude (decimal degrees).
+urban_centric_locale          int      NCES urban-centric locale code
+                                       (11-13 city, 21-23 suburb, 31-33 town,
+                                       41-43 rural).
+lowest_grade_offered          int      Lowest grade the school offers.
+charter                       float    Charter school flag (0 = no, 1 = yes).
+                                       Placeholder -2 recoded to NaN.
+magnet                        float    Magnet school flag (0 = no, 1 = yes).
+                                       Placeholders -1, -2 recoded to NaN.
+title_i_status                float    Title I status code. Placeholder -1
+                                       recoded to NaN.
+enrollment                    int      Total school enrollment (all grades).
+enrl_9to12                    float    Grade 9-12 enrollment (engineered: sum of
+                                       grade 9,10,11,12 counts). AP-rate denom.
+teachers_fte                  float    Full-time-equivalent teachers. A value of
+                                       0 recoded to NaN (treated as missing).
+student_teacher_ratio         float    Engineered: enrollment / teachers_fte.
+free_or_reduced_price_lunch   float    Count of students eligible for free or
+                                       reduced-price lunch.
+frl_pct                       float    Engineered: free_or_reduced_price_lunch /
+                                       enrollment. Values > 1 recoded to NaN.
+enrl_AP                       int      AP enrollment count. Original CRDC code
+                                       -2 ("no AP program") recoded to 0.
+ap_rate                       float    TARGET. enrl_AP / enrl_9to12, in [0, 1].
+
+
+VARIABLE TYPES
+--------------------------------------------------------------------------------
+Identifiers (not used as model features):
+    ncessch, school_name, leaid
+
+Categorical - nominal (unordered; one-hot / target encode):
+    state_location        50 states + DC + Puerto Rico
+    fips                  state code (same information as state_location)
+    urban_centric_locale  city / suburb / town / rural (+ size subcodes)
+    charter               binary flag (0 = no, 1 = yes)
+    magnet                binary flag (0 = no, 1 = yes)
+    title_i_status        6 Title I categories (see note below)
+
+Ordinal (ordered categories):
+    lowest_grade_offered  grade level has a natural order
+
+Numerical - continuous:
+    latitude, longitude
+    enrollment, enrl_9to12, teachers_fte, student_teacher_ratio
+    free_or_reduced_price_lunch, frl_pct
+    enrl_AP
+    ap_rate               TARGET; bounded [0, 1], zero-inflated
+
+Notes:
+- title_i_status is nominal (codes 1-6 are not "more vs. less"):
+    1 = Title I targeted-assistance eligible - no program
+    2 = Title I targeted-assistance school
+    3 = Title I schoolwide eligible - running a targeted-assistance program
+    4 = Title I schoolwide eligible - no program
+    5 = Title I schoolwide school
+    6 = not a Title I school
+
+
+MISSINGNESS (fraction missing in ap_clean_2021.csv)
+--------------------------------------------------------------------------------
+magnet                        0.320
+free_or_reduced_price_lunch   0.172
+frl_pct                       0.172
+title_i_status                0.089
+charter                       0.042
+teachers_fte                  0.026
+student_teacher_ratio         0.026
+(all other columns: 0.000)
+
+
+CLEANING NOTES
+--------------------------------------------------------------------------------
+- Negative values in the raw data are placeholder/suppression codes, not real
+  measurements: -1 = missing/not reported, -2 = not applicable. These are
+  recoded to NaN (or, for enrl_AP, -2 -> 0 meaning no AP program).
+- Rows dropped during cleaning: schools with missing AP enrollment, zero
+  grade 9-12 enrollment, or an impossible AP rate above 1.
+- Full step-by-step logic is in src/02_data_cleaning.ipynb.
