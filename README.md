@@ -37,6 +37,8 @@ Run `src/01_data_collection.ipynb` to download the raw files, then `src/02_data_
 Modeling notebooks, fitted models, predictions, and evaluation metrics are not yet included in the repository. The environment below covers the current collection, cleaning, and EDA notebooks.
 
 ## Python and package versions
+| Component | Version |
+| --- | --- |
 | Python | 3.14.6 |
 | pandas | 3.0.3 |
 | NumPy | 2.4.6 |
