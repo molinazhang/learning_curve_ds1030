@@ -1,6 +1,4 @@
 # Versions captured from the local ds_1030 environment.
-# Covers the current collection, cleaning, and EDA notebooks.
-# Update when modeling dependencies are introduced.
 name: learning-curve-ds1030
 channels:
   - conda-forge
@@ -13,3 +11,6 @@ dependencies:
   - seaborn=0.13.2
   - jupyterlab=4.6.3
   - ipykernel=7.3.0
+  - scikit-learn=1.9.0
+  - xgboost=3.2.0
+  - joblib
